@@ -59,7 +59,6 @@ def parse_args(parser):
     args.dbname = get_arg('DBNAME', args.dbname)
     args.dbusername = get_arg('DBUSERNAME', args.dbusername)
     args.dbpassword = get_arg('DBPASSWORD', args.dbpassword)
-    args.cleartables = get_arg('CLEARTABLES', args.cleartables)
     return args
 
 
