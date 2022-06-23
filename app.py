@@ -34,6 +34,8 @@ def main(args):
         logging.info('Creating table')
         query = 'CREATE TABLE results (ID varchar(40) NOT NULL, CLUSTERS integer, SCORE integer)'
         cur.execute(query)
+    else:
+        logging.info('Table exists, will not create')
 
     while True:
         for message in consumer:
