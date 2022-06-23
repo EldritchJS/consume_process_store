@@ -9,7 +9,7 @@ from json import dumps
 def main(args):
     logging.info('brokers={}'.format(args.brokers))
     logging.info('topic={}'.format(args.topic))
-    logging.info('creating kafka consumer')
+    logging.info('creating kafka producer')
 
     producer = KafkaProducer(bootstrap_servers=args.brokers,
                              value_serializer=lambda x: 
