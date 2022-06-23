@@ -17,12 +17,13 @@ def main(args):
 
     logging.info("finished creating kafka producer")
 
-    for i in range(13):
-        url_string = 'dummyurl' + str(i)
-        message_dict = {'command':'Download', 'url':url_string}
-        logging.info('Sending message {}'.format(str(i)))
-        producer.send(args.topic, value=message_dict)
-        time.sleep(int(args.latency))
+    while True:
+        for i in range(13):
+            url_string = 'dummyurl' + str(i)
+            message_dict = {'command':'Download', 'url':url_string}
+            logging.info('Sending message {}'.format(str(i)))
+            producer.send(args.topic, value=message_dict)
+            time.sleep(int(args.latency))
 
 def get_arg(env, default):
     return os.getenv(env) if os.getenv(env, "") != "" else default
