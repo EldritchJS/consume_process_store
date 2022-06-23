@@ -27,15 +27,12 @@ def main(args):
         user = args.dbusername,
         password = args.dbpassword)
     cur = conn.cursor(cursor_factory=RealDictCursor)
-    query = 'SELECT EXISTS ( SELECT FROM pg_tables WHERE schemaname =%s AND tablename =%s)'
-    cur.execute(query, ('public', 'results',))
-    res = cur.fetchone()
-    if res['exists'] is False:
-        logging.info('Creating table')
-        query = 'CREATE TABLE results (ID varchar(40) NOT NULL, CLUSTERS integer, SCORE integer)'
-        cur.execute(query)
-    else:
-        logging.info('Table exists, will not create')
+    logging.info('Creating table if not exists')
+    query = 'CREATE TABLE IF NOT EXISTS results (ID varchar(40) NOT NULL, CLUSTERS integer, SCORE integer)'
+    cur.execute(query)
+    cur.commit()
+    cur.close()
+    conn.close()
 
     while True:
         for message in consumer:
@@ -62,7 +59,9 @@ def main(args):
                     cur = conn.cursor(cursor_factory=RealDictCursor)
                     query = 'INSERT INTO results(ID, CLUSTERS, SCORE) VALUES (%s,13,19)'
                     logging.info('Cursor created, sending query {}'.format(query))
-                    cur.execute(query,(datetime.now.strftime('%m/%d/%Y-%H:%M:%S'),))
+                    cur.execute(query,(datetime.now().strftime('%m/%d/%Y-%H:%M:%S'),))
+                    logging.info('Committing change')
+                    cur.commit()
                     logging.info('Closing cursor')
                     cur.close()
                     logging.info('Closing connection')
