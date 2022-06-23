@@ -31,6 +31,7 @@ def main(args):
     cur.execute(query, ('public', 'results',))
     res = cur.fetchone()
     if res['exists'] is False:
+        logging.info('Creating table')
         query = 'CREATE TABLE results (ID varchar(40) NOT NULL, CLUSTERS integer, SCORE integer)'
         cur.execute(query)
 
@@ -48,16 +49,21 @@ def main(args):
                 # Store the results
                 logging.info('Store results here')
                 try:
+                    logging.info('Connecting to DB')
                     conn = psycopg2.connect(
                         host = args.dbhost,
                         port = 5432,
                         dbname = args.dbname,
                         user = args.dbusername,
                         password = args.dbpassword)
+                    logging.info('Connected, creating cursor')
                     cur = conn.cursor(cursor_factory=RealDictCursor)
                     query = 'INSERT INTO results(ID, CLUSTERS, SCORE) VALUES (%s,13,19)'
+                    logging.info('Cursor created, sending query {}'.format(query))
                     cur.execute(query,(datetime.now.strftime('%m/%d/%Y-%H:%M:%S'),))
+                    logging.info('Closing cursor')
                     cur.close()
+                    logging.info('Closing connection')
                     conn.close()
                 except Exception:
                     logging.info('Got exception with postgresql')
