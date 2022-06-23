@@ -28,10 +28,10 @@ def main(args):
         password = args.dbpassword)
     cur = conn.cursor(cursor_factory=RealDictCursor)
     query = 'SELECT EXISTS ( SELECT FROM pg_tables WHERE schemaname =%s AND tablename =%s)'
-    cur.execute(query,(args.dbname,'results',))
+    cur.execute(query, ('public', 'results',))
     res = cur.fetchone()
-    if res[0] is False:
-        query = 'CREATE TABLE results (ID varchar(40 NOT NULL, CLUSTERS integer, SCORE integer))'
+    if res['exists'] is False:
+        query = 'CREATE TABLE results (ID varchar(40) NOT NULL, CLUSTERS integer, SCORE integer)'
         cur.execute(query)
 
     while True:
