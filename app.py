@@ -7,6 +7,7 @@ import logging
 import os
 import time
 from datetime import datetime
+from json import loads
 
 def main(args):
     logging.info('brokers={}'.format(args.brokers))
@@ -14,7 +15,7 @@ def main(args):
     logging.info('creating kafka consumer')   
 
     consumer = KafkaConsumer(
-        args.readtopic,
+        args.topic,
         bootstrap_servers=args.brokers,
         value_deserializer=lambda val: loads(val.decode('utf-8')))
     logging.info("finished creating kafka consumer")
