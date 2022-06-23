@@ -39,7 +39,7 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     parser = argparse.ArgumentParser()
     parser.add_argument(
-            '--latench',
+            '--latency',
             help='Time between producing messages, env variable LATENCY',
             default='5')
     parser.add_argument(

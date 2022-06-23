@@ -33,21 +33,21 @@ def main(args):
                 
                 # Store the results
                 logging.info('Store results here')
-                conn = psycopg2.connect(
-                    host = args.dbhost,
-                    port = 5432,
-                    dbname = args.dbname,
-                    user = args.dbusername,
-                    password = args.dbpassword)
-                cur = conn.cursor(cursor_factory=RealDictCursor)
                 try:
+                    conn = psycopg2.connect(
+                        host = args.dbhost,
+                        port = 5432,
+                        dbname = args.dbname,
+                        user = args.dbusername,
+                        password = args.dbpassword)
+                    cur = conn.cursor(cursor_factory=RealDictCursor)
                     query = 'INSERT INTO results(ID, CLUSTERS, SCORE) VALUES (' + datetime.now.strftime('%m/%d/%Y-%H:%M:%S') + '13' + '19'
                     cur.execute(query)
+                    cur.close()
+                    conn.close()
                 except Exception:
-                    res = []
-                cur.close()
-                conn.close()
-            time.sleep(0.3) # Artificial delay for testing
+                    continue 
+                time.sleep(0.3) # Artificial delay for testing
 
 def get_arg(env, default):
     return os.getenv(env) if os.getenv(env, "") != "" else default
