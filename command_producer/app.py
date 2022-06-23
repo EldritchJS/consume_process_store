@@ -21,7 +21,7 @@ def main(args):
         url_string = 'dummyurl' + str(i)
         message_dict = {'command':'Download', 'url':url_string}
         producer.send(args.topic, value=message_dict)
-        time.sleep(0.3)
+        time.sleep(int(args.latency))
 
 def get_arg(env, default):
     return os.getenv(env) if os.getenv(env, "") != "" else default
@@ -30,12 +30,17 @@ def parse_args(parser):
     args = parser.parse_args()
     args.brokers = get_arg('KAFKA_BROKERS', args.brokers)
     args.topic = get_arg('KAFKA_TOPIC', args.topic)
+    args.latency = get_arg('LATENCY', args.latency)
     return args
 
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+            '--latench',
+            help='Time between producing messages, env variable LATENCY',
+            default='5')
     parser.add_argument(
             '--brokers',
             help='The bootstrap servers, env variable KAFKA_BROKERS',
