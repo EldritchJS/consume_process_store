@@ -1,0 +1,9 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+ name: commands
+ labels:
+   strimzi.io/cluster: "eldritchjs-cluster"
+spec:
+ partitions: 3
+ replicas: 3
