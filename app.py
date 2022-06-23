@@ -30,8 +30,8 @@ def main(args):
     logging.info('Creating table if not exists')
     query = 'CREATE TABLE IF NOT EXISTS results (ID varchar(40) NOT NULL, CLUSTERS integer, SCORE integer)'
     cur.execute(query)
-    cur.commit()
     cur.close()
+    conn.commit()
     conn.close()
 
     while True:
@@ -60,10 +60,10 @@ def main(args):
                     query = 'INSERT INTO results(ID, CLUSTERS, SCORE) VALUES (%s,13,19)'
                     logging.info('Cursor created, sending query {}'.format(query))
                     cur.execute(query,(datetime.now().strftime('%m/%d/%Y-%H:%M:%S'),))
-                    logging.info('Committing change')
-                    cur.commit()
                     logging.info('Closing cursor')
                     cur.close()
+                    logging.info('Committing change')
+                    conn.commit()
                     logging.info('Closing connection')
                     conn.close()
                 except Exception:
