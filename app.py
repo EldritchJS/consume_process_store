@@ -20,6 +20,20 @@ def main(args):
         value_deserializer=lambda val: loads(val.decode('utf-8')))
     logging.info("finished creating kafka consumer")
 
+    conn = psycopg2.connect(
+        host = args.dbhost,
+        port = 5432,
+        dbname = args.dbname,
+        user = args.dbusername,
+        password = args.dbpassword)
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    query = 'SELECT EXISTS ( SELECT FROM pg_tables WHERE schemaname =%s AND tablename =%s)'
+    cur.execute(query,(args.dbname,'results',))
+    res = cur.fetchone()
+    if res[0] is False:
+        query = 'CREATE TABLE results (ID varchar(40 NOT NULL, CLUSTERS integer, SCORE integer))'
+        cur.execute(query)
+
     while True:
         for message in consumer:
             logging.info('Received {}'.format(message.value))
@@ -41,11 +55,12 @@ def main(args):
                         user = args.dbusername,
                         password = args.dbpassword)
                     cur = conn.cursor(cursor_factory=RealDictCursor)
-                    query = 'INSERT INTO results(ID, CLUSTERS, SCORE) VALUES (' + datetime.now.strftime('%m/%d/%Y-%H:%M:%S') + '13' + '19'
-                    cur.execute(query)
+                    query = 'INSERT INTO results(ID, CLUSTERS, SCORE) VALUES (%s,13,19)'
+                    cur.execute(query,(datetime.now.strftime('%m/%d/%Y-%H:%M:%S'),))
                     cur.close()
                     conn.close()
                 except Exception:
+                    logging.info('Got exception with postgresql')
                     continue 
                 time.sleep(0.3) # Artificial delay for testing
 
