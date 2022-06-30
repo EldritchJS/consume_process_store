@@ -30,11 +30,12 @@ To start a basic webapp:
 
 ```
 oc new-app openshift/python:latest~https://github.com/eldritchjs/consume_process_store \
---context-dir = webapp \
+--context-dir=webapp \
 -e KAFKA_BROKERS=eldritchjs-cluster-kafka-brokers:9092 \
 -e KAFKA_TOPIC=commands \
 -e DBHOST=postgresql \
 -e DBNAME=results \
 -e DBUSERNAME=redhat \
 -e DBPASSWORD=redhat \
+--name webapp
 ```
