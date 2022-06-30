@@ -8,6 +8,9 @@ import os
 import time
 from datetime import datetime
 from json import loads
+from urllib import request
+import shutil
+from zipfile import ZipFile
 
 def main(args):
     logging.info('brokers={}'.format(args.brokers))
@@ -38,10 +41,14 @@ def main(args):
         for message in consumer:
             logging.info('Received {}'.format(message.value))
             # Parse the message
-            if (message.value['command']=='Download') and (message.value['url']):
+            if (message.value['command'] == 'Download') and (message.value['url']):
                 logging.info('Received {} command with {} location'.format(message.value['command'],message.value['url']))
                 logging.info('TODO: Download the data here')
-       
+                os.mkdir("./data")
+                request.urlretireve(message.value['url'], "./data/batch.zip")
+                with ZipFile('./data/batch.zip', 'r') as zipObj:
+                    zipObj.extractall()
+                shutil.rmtree('./data')
                 # Process the data
                 logging.info('TODO: Process the data here')
                 
@@ -50,16 +57,16 @@ def main(args):
                 try:
                     logging.info('Connecting to DB')
                     conn = psycopg2.connect(
-                        host = args.dbhost,
-                        port = 5432,
-                        dbname = args.dbname,
-                        user = args.dbusername,
-                        password = args.dbpassword)
+                        host=args.dbhost,
+                        port=5432,
+                        dbname=args.dbname,
+                        user=args.dbusername,
+                        password=args.dbpassword)
                     logging.info('Connected, creating cursor')
                     cur = conn.cursor(cursor_factory=RealDictCursor)
                     query = 'INSERT INTO results(ID, CLUSTERS, SCORE) VALUES (%s,13,19)'
                     logging.info('Cursor created, sending query {}'.format(query))
-                    cur.execute(query,(datetime.now().strftime('%m/%d/%Y-%H:%M:%S'),))
+                    cur.execute(query, (datetime.now().strftime('%m/%d/%Y-%H:%M:%S'),))
                     logging.info('Closing cursor')
                     cur.close()
                     logging.info('Committing change')
