@@ -1,7 +1,7 @@
 import os
 import logging
 import argparse
-from flask import Flask
+from flask import Flask, request, render_template
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from kafka import KafkaProducer
@@ -31,18 +31,19 @@ def results():
     return "<html><body>" + s + "</body></html>"
 
 
-@app.route('/commands')
+@app.route('/commands', methods=["GET", "POST"])
 def commands():
-    producer = KafkaProducer(bootstrap_servers=cmdline_args.brokers,
-                             value_serializer=lambda x:
-                             dumps(x).encode('utf-8'))
-    message_dict = {'command': 'Download', 'url': 'TODO'}
-    producer.send(cmdline_args.topic, value=message_dict)
+    if request.method == "POST":
+        producer = KafkaProducer(bootstrap_servers=cmdline_args.brokers,
+                                 value_serializer=lambda x:
+                                 dumps(x).encode('utf-8'))
+        command = request.form.get("command")
+        url = request.form.get("url")
+        message_dict = {'command': command, 'url': url}
+        producer.send(cmdline_args.topic, value=message_dict)
 
-    return "<html><body>TODO: Send command</body></html>"
-#    message_dict = {'command':'Download', 'url':url_string}
-#    logging.info('Sending message {}'.format(str(i)))
-#    producer.send(cmdline_args.topic, value=message_dict)
+        return "<html><body>Sent Command: " + command + "   URL: " + url + "</body></html>"
+    return render_template("command_form.html")
 
 
 def main():
