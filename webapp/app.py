@@ -23,7 +23,7 @@ def results():
     cursor = conn.cursor(cursor_factory=RealDictCursor)
 
     cursor = conn.cursor(cursor_factory=RealDictCursor)
-    cursor.execute('SELCET COUNT(*) FROM results')
+    cursor.execute('SELECT COUNT(*) FROM results')
     s = "<table style='border:1px solid red'>"
 
     for row in cursor:
