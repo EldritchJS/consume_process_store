@@ -21,16 +21,11 @@ def results():
         user=cmdline_args.dbusername,
         password=cmdline_args.dbpassword)
     cursor = conn.cursor(cursor_factory=RealDictCursor)
-
-    cursor = conn.cursor(cursor_factory=RealDictCursor)
     cursor.execute('SELECT COUNT(*) FROM results')
-    s = "<table style='border:1px solid red'>"
+    res = cursor.fetchone()
 
-    for row in cursor:
-        s = s + "<tr>"
-    for x in row:
-        s = s + "<td>" + str(x) + "</td>"
-    s = s + "</tr>"
+    s = "<table style='border:1px solid red'><tr><td>Count result: "
+    s = s + str(res['count']) + "</td></tr>"
     conn.close()
 
     return "<html><body>" + s + "</body></html>"
