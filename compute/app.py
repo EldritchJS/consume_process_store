@@ -45,7 +45,7 @@ def main(args):
                 logging.info('Received {} command with {} location'.format(message.value['command'],message.value['url']))
                 logging.info('TODO: Download the data here')
                 os.mkdir("./data")
-                request.urlretireve(message.value['url'], "./data/batch.zip")
+                request.urlretrieve(message.value['url'], "./data/batch.zip")
                 with ZipFile('./data/batch.zip', 'r') as zipObj:
                     zipObj.extractall()
                 shutil.rmtree('./data')

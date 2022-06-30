@@ -5,14 +5,14 @@ oc create -f kafka-topic.yaml
 
 ```
 oc new-app openshift/python:latest~https://github.com/eldritchjs/consume_process_store \
---context-dir = compute \
+--context-dir=compute \
 -e KAFKA_BROKERS=eldritchjs-cluster-kafka-brokers:9092 \
 -e KAFKA_TOPIC=commands \
--e DBHOST=postgresql \
+-e DBHOST=eldritchjs-postgresql \
 -e DBNAME=results \
 -e DBUSERNAME=redhat \
 -e DBPASSWORD=redhat \
---name compute
+--name eldritchjs-compute
 ```
 
 
