@@ -55,7 +55,7 @@ def main():
     logging.info('brokers={}'.format(cmdline_args.brokers))
     logging.info('topic={}'.format(cmdline_args.topic))
     logging.info('starting flask server')
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=8080)
 
 
 def get_arg(env, default):
