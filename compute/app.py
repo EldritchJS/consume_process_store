@@ -43,15 +43,14 @@ def main(args):
             # Parse the message
             if (message.value['command'] == 'Download') and (message.value['url']):
                 logging.info('Received {} command with {} location'.format(message.value['command'],message.value['url']))
-                logging.info('TODO: Download the data here')
+                logging.info('Download the data here')
                 os.mkdir("./data")
-                request.urlretrieve(message.value['url'], "./data/batch.zip")
+                request.urlretrieve(message.value['url'], filename="./data/batch.zip")
                 with ZipFile('./data/batch.zip', 'r') as zipObj:
-                    zipObj.extractall()
-                shutil.rmtree('./data')
+                    zipObj.extractall(path='./data')
                 # Process the data
                 logging.info('TODO: Process the data here')
-                
+                shutil.rmtree('./data')
                 # Store the results
                 logging.info('Store results here')
                 try:
