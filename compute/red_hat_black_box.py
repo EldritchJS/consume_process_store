@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use("Agg")
 import random
 import itertools
 import ranking
