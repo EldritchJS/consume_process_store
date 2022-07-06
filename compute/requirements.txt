@@ -12,8 +12,12 @@ imagehash
 matplotlib
 scipy
 faiss-gpu
-dill
+orjson
+inspect
 h5py
+torch
+torchvision
+scikit-learn
 imgcat
 
 
