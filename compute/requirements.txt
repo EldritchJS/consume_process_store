@@ -15,5 +15,12 @@ faiss-gpu
 dill
 h5py
 imgcat
-
+bigjson
+orjson
+ujson
+deepdish
+json_stream
+silx
+torch
+torchvision
 
