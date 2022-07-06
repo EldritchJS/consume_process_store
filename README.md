@@ -43,7 +43,7 @@ oc new-app openshift/python:latest~https://github.com/eldritchjs/consume_process
 -e DBNAME=<YOUR_DBNAME> \
 -e DBUSERNAME=<YOUR_DBUSERNAME> \
 -e DBPASSWORD=<YOUR_DBPASSWORD> \
---name <YOUR_PREFIX>webapp
+--name <YOUR_PREFIX>-webapp
 ```
 
 Be sure to expose your webapp as a service so you can access it. 
