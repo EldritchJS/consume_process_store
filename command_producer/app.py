@@ -6,6 +6,8 @@ import time
 from kafka import KafkaProducer
 from json import dumps
 
+from compute import red_hat_black_box
+
 def main(args):
     logging.info('brokers={}'.format(args.brokers))
     logging.info('topic={}'.format(args.topic))

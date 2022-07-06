@@ -154,7 +154,7 @@ def recursive_louvain_clustering(G):
     return clusters
 
 
-def louvain_clustering(G, output_file):
+def louvain_clustering(G):
     for n1, n2, d in G.edges.data():
         if d['weight'] < 0:
             d['weight'] = d['weight'] * -1
@@ -170,9 +170,11 @@ def louvain_clustering(G, output_file):
     for image, cluster_id in clusters.items():
         cluster_dict[cluster_id].append(image)
 
-    print('Clusters:', len(cluster_dict))
-    with open(output_file, 'w+') as f:
-        json.dump(cluster_dict, f)
+    return cluster_dict
+
+    # print('Clusters:', len(cluster_dict))
+    # with open(output_file, 'w+') as f:
+    #     json.dump(cluster_dict, f)
 
 
 def h_dbscan(G, output_file):

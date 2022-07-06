@@ -2,6 +2,7 @@ import random
 import itertools
 import ranking
 import clustering_functions
+import json
 
 from index_class import Index
 from datetime import datetime
@@ -14,7 +15,9 @@ import networkx as nx
 
 
 
-def cluster(G, cluster_type, output_file):
+def cluster(G, cluster_type):
+    output_file = 'meow.dat'
+
     if cluster_type == 'hierarchical':
         clustering_functions.hierarchical_clustering(G, output_file)
     elif cluster_type == 'spectral':
@@ -100,13 +103,13 @@ def create_graph(i):
 
     return G
 
-def full_pipeline(start_date, end_date, output_file):
+def full_pipeline(start_date, end_date, root_data_path='./data', output_file=None):
     mp.set_start_method('spawn')
     data_tag = 'ukr'
     tag_size = 16
     feature = 'PHASH'
 
-    root_post_path = '../ukraine_scrape/'
+    root_post_path = root_data_path
     json_path_list = glob(root_post_path + '/**/*.json', recursive=True)
 
     timely_images = []
@@ -118,7 +121,7 @@ def full_pipeline(start_date, end_date, output_file):
             if image_list:
                 timely_images.append(image_list[0])
 
-    i = Index(cache_dir=f'./mini_{data_tag}_{feature}_{start_date}_{end_date}_index/', feature_type=feature)
+    i = Index(cache_dir=f'./{root_data_path}/mini_{data_tag}_{feature}_{start_date}_{end_date}_index/', feature_type=feature)
     feature_list, feature_dict = i.features_from_path_list(timely_images, ID=False)
 
     id_feature_dict = i.ID_features(feature_dict)
@@ -128,7 +131,13 @@ def full_pipeline(start_date, end_date, output_file):
     i.train_index(None, training_features=np.array(feature_list, dtype=np.float32))
     i.add_to_index(None, feature_list=np.array(i.feature_list, dtype=np.float32), ids=np.array(i.ID_list))
     g = create_graph(i)
-    cluster(g, 'louvain', output_file)
+    cluster_data = cluster(g, 'louvain')
+
+    if output_file:
+        with open(output_file, 'w+') as f:
+            json.dump(cluster_data, f)
+
+    return cluster_data
 
 
 if __name__ == '__main__':

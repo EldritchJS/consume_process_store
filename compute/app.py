@@ -12,6 +12,8 @@ from urllib import request
 import shutil
 from zipfile import ZipFile
 
+from red_hat_black_box import full_pipeline
+
 def main(args):
     logging.info('brokers={}'.format(args.brokers))
     logging.info('topic={}'.format(args.topic))
@@ -49,7 +51,12 @@ def main(args):
                 with ZipFile('./data/batch.zip', 'r') as zipObj:
                     zipObj.extractall(path='./data')
                 # Process the data
+
                 logging.info('TODO: Process the data here')
+                start_date = datetime.strptime('2016-05-01', '%Y-%m-%d')
+                end_date = datetime.strptime('2023-05-05', '%Y-%m-%d')
+                cluster_data = full_pipeline(start_date, end_date, root_data_path='./data')
+
                 shutil.rmtree('./data')
                 # Store the results
                 logging.info('Store results here')
