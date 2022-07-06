@@ -1,5 +1,16 @@
 psycopg2
 requests
 kafka-python
+networkx
+markov_clustering
+python-louvain
+hdbscan
+xxhash
+tqdm
+opencv-python
+imagehash
+matplotlib
+scipy
+faiss-gpu
 
 
