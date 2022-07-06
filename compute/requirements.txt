@@ -12,5 +12,6 @@ imagehash
 matplotlib
 scipy
 faiss-gpu
+imgcat
 
 
