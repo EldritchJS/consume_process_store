@@ -1,3 +1,4 @@
+pip>22.0.5
 psycopg2
 requests
 kafka-python
@@ -12,12 +13,8 @@ imagehash
 matplotlib
 scipy
 faiss-gpu
-orjson
-inspect
+dill
 h5py
-torch
-torchvision
-scikit-learn
 imgcat
 bigjson
 orjson
