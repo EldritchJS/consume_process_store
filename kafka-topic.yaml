@@ -3,7 +3,7 @@ kind: KafkaTopic
 metadata:
  name: commands
  labels:
-   strimzi.io/cluster: "eldritchjs-cluster"
+   strimzi.io/cluster: "my-cluster"
 spec:
  partitions: 3
  replicas: 3
