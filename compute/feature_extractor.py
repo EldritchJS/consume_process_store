@@ -266,8 +266,10 @@ def feature_detection(imgpath, img, detetype, gpu=True, kmax=500):
     elif detetype == "PHASH":
         st_t = time.time()
         h, w = img.shape
+        print(imgpath, img.shape)
         x_center, y_center = int(w / 2), int(h / 2)
         keypoints = [cv2.KeyPoint(x=x_center, y=y_center, _size=1, _angle=0)]
+        print(keypoints)
         ed_t = time.time()
 
     elif detetype == "VGG":
@@ -392,6 +394,7 @@ def feature_detection_and_description(img_path, feature_type, kmax=500, img=None
 
     if not keyps:
         tqdm.write(f'[ERROR]: Failed to detect keypoints for {img_path}')
+        exit()
         return [], [], None, None
 
     feat, dsc_t, success, keyps2 = feature_description(img, img_path, keyps, feature_type, gpu=gpu, model=model)
