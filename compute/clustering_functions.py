@@ -60,7 +60,7 @@ def graph_drawer(G, cluster_name):
     with open(os.path.join('./data/cluster_htmls/recursive_louvain_cluster_vis/ukr', f'{cluster_name}.json'), 'w+') as f:
         json.dump(G_json, f)
 
-def spectral_clustering(G, output_file):
+def spectral_clustering(G):
     path_to_index = {}
     index_to_path = {}
     index = 0
@@ -100,11 +100,12 @@ def spectral_clustering(G, output_file):
     for n, p in zip(list(range(len(G))), list(sc.labels_)):
         partition[int(p)].append(index_to_path[n])
 
-    with open(output_file, 'w+') as f:
-        json.dump(partition, f)
+    return partition
+    # with open(output_file, 'w+') as f:
+    #     json.dump(partition, f)
 
 
-def markov_clustering(G, output_file):
+def markov_clustering(G):
     path_to_index = {}
     index_to_path = {}
     index = 0
@@ -128,8 +129,9 @@ def markov_clustering(G, output_file):
 
     # print(partition[1])
     # exit(69)
-    with open(output_file, 'w+') as f:
-        json.dump(partition, f)
+    return partition
+    # with open(output_file, 'w+') as f:
+    #     json.dump(partition, f)
 
 
 def recursive_louvain_clustering(G):
@@ -179,7 +181,7 @@ def louvain_clustering(G):
     #     json.dump(cluster_dict, f)
 
 
-def h_dbscan(G, output_file):
+def h_dbscan(G):
     # path_length = dict(nx.all_pairs_shortest_path_length(G))
     # distances = np.zeros((len(G), len(G)))
     # distances = np.full((len(G), len(G)), np.inf)
@@ -210,11 +212,12 @@ def h_dbscan(G, output_file):
     for i in range(0, len(cluster_labels)):
         cluster_dict[int(cluster_labels[i])].append(index_to_path[i])
 
-    with open(output_file, 'w+') as f:
-        json.dump(cluster_dict, f)
+    return cluster_dict
+    # with open(output_file, 'w+') as f:
+    #     json.dump(cluster_dict, f)
 
 
-def hierarchical_clustering(G, output_file):
+def hierarchical_clustering(G):
     # if not i:
     #     i = Index(cache_dir='/nfs/datasets/bill_data/ukr_data/image_index_cache')
     #     i.load_index()
@@ -261,7 +264,8 @@ def hierarchical_clustering(G, output_file):
     for n, p in zip(list(range(len(G))), membership):
         partition[int(p)].append(index_to_path[n])
 
-    with open(output_file, 'w+') as f:
-        json.dump(partition, f)
+    return partition
+    # with open(output_file, 'w+') as f:
+    #     json.dump(partition, f)
     # print(list(partition.values()))
     # print(nx.clustering(G))

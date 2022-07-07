@@ -21,15 +21,15 @@ def cluster(G, cluster_type):
     output_file = 'meow.dat'
 
     if cluster_type == 'hierarchical':
-        clustering_functions.hierarchical_clustering(G, output_file)
+        clustering_functions.hierarchical_clustering(G)
     elif cluster_type == 'spectral':
-        clustering_functions.spectral_clustering(G, output_file)
+        clustering_functions.spectral_clustering(G)
     elif cluster_type == 'louvain':
         clustering_functions.louvain_clustering(G)
     elif cluster_type == 'hdbscan':
-        clustering_functions.h_dbscan(G, output_file)
+        clustering_functions.h_dbscan(G)
     elif cluster_type == 'markov':
-        clustering_functions.markov_clustering(G, output_file)
+        clustering_functions.markov_clustering(G)
     else:
         print('Unrecognized cluster type...')
 
