@@ -183,108 +183,108 @@ def parallel_feature_extraction(image_path_list, feature_type, marriage_type, ma
     return feature_dict, raw_feature_list
 
 def feature_detection(imgpath, img, detetype, gpu=True, kmax=500):
-    try:
-        if detetype == "SURF3" or detetype == 'MARRIAGE':
-            st_t = time.time()
-            # detects the SURF keypoints, with very low Hessian threshold
+    # try:
+    if detetype == "SURF3" or detetype == 'MARRIAGE':
+        st_t = time.time()
+        # detects the SURF keypoints, with very low Hessian threshold
 
-            if not gpu:
-                surf = cv2.xfeatures2d.SURF_create(hessianThreshold=10, nOctaves=nOctaves, nOctaveLayers=nOctaveLayers,
-                                                       extended=extended, upright=upright)
-                keypoints = surf.detect(img)
-            else:
-                surf_gpu = cv2.cuda.SURF_CUDA_create(_hessianThreshold=10, _nOctaves=nOctaves, _nOctaveLayers=nOctaveLayers,
-                                                       _extended=extended, _upright=upright)
+        if not gpu:
+            surf = cv2.xfeatures2d.SURF_create(hessianThreshold=10, nOctaves=nOctaves, nOctaveLayers=nOctaveLayers,
+                                                   extended=extended, upright=upright)
+            keypoints = surf.detect(img)
+        else:
+            surf_gpu = cv2.cuda.SURF_CUDA_create(_hessianThreshold=10, _nOctaves=nOctaves, _nOctaveLayers=nOctaveLayers,
+                                                   _extended=extended, _upright=upright)
 
-                def upscale_image(img):
-                    return cv2.resize(img, (img.shape[1] * 2, img.shape[0] * 2), interpolation=cv2.INTER_AREA)
+            def upscale_image(img):
+                return cv2.resize(img, (img.shape[1] * 2, img.shape[0] * 2), interpolation=cv2.INTER_AREA)
 
-                upscales = 0
-                detect_worked = False
-                while not detect_worked:
-                    try:
-                        gpu_img = cv2.cuda_GpuMat()
-                        gpu_img.upload(img)
-                        keypoints_gpu = surf_gpu.detect(gpu_img, None)
-                    except:
-                        #tqdm.write('trying to upscale')
-                        img = upscale_image(img)
-                        upscales += 1
-                        if upscales > 4:
-                            tqdm.write('Failed upscales, skipping')
-                            return [], -1
-                    else:
-                        detect_worked = True
+            upscales = 0
+            detect_worked = False
+            while not detect_worked:
+                try:
+                    gpu_img = cv2.cuda_GpuMat()
+                    gpu_img.upload(img)
+                    keypoints_gpu = surf_gpu.detect(gpu_img, None)
+                except:
+                    #tqdm.write('trying to upscale')
+                    img = upscale_image(img)
+                    upscales += 1
+                    if upscales > 4:
+                        tqdm.write('Failed upscales, skipping')
+                        return [], -1
+                else:
+                    detect_worked = True
 
-                keypoints = cv2.cuda_SURF_CUDA.downloadKeypoints(surf_gpu, keypoints_gpu)
+            keypoints = cv2.cuda_SURF_CUDA.downloadKeypoints(surf_gpu, keypoints_gpu)
 
-            # sorts the keypoints according to their Hessian value
-            keypoints = sorted(keypoints, key=lambda match: match.response, reverse=True)
+        # sorts the keypoints according to their Hessian value
+        keypoints = sorted(keypoints, key=lambda match: match.response, reverse=True)
 
-            # obtains the positions of the keypoints within the described image
-            positions = []
-            for kp in keypoints:
-                positions.append((kp.pt[0], kp.pt[1]))
-            positions = np.array(positions).astype(np.float32)
+        # obtains the positions of the keypoints within the described image
+        positions = []
+        for kp in keypoints:
+            positions.append((kp.pt[0], kp.pt[1]))
+        positions = np.array(positions).astype(np.float32)
 
-            # selects the keypoints based on their positions and distances
-            selectedKeypoints = []
-            selectedPositions = []
+        # selects the keypoints based on their positions and distances
+        selectedKeypoints = []
+        selectedPositions = []
 
-            if len(keypoints) > 0:
-                # keeps the top-n strongest keypoints
-                for i in range(min(keepTopNCount,len(keypoints))):
-                    selectedKeypoints.append(keypoints[i])
-                    selectedPositions.append(positions[i])
+        if len(keypoints) > 0:
+            # keeps the top-n strongest keypoints
+            for i in range(min(keepTopNCount,len(keypoints))):
+                selectedKeypoints.append(keypoints[i])
+                selectedPositions.append(positions[i])
+
+                # if the amount of wanted keypoints was reached, quits the loop
+                if len(selectedKeypoints) >= kmax:
+                    break
+
+            selectedPositions = np.array(selectedPositions)
+
+            # adds the remaining keypoints according to the distance threshold,
+            # if the amount of wanted keypoints was not reached yet
+            # print('selected keypoints size: ', len(selectedKeypoints), ' kmax: ',kmax)
+            if len(selectedKeypoints) < kmax:
+                matcher = cv2.BFMatcher()
+                for i in range(keepTopNCount, positions.shape[0]):
+                    currentPosition = [positions[i]]
+                    currentPosition = np.array(currentPosition)
+
+                    match = matcher.match(currentPosition, selectedPositions)[0]
+                    if match.distance > distanceThreshold:
+                        selectedKeypoints.append(keypoints[i])
+                        selectedPositions = np.vstack((selectedPositions, currentPosition))
 
                     # if the amount of wanted keypoints was reached, quits the loop
                     if len(selectedKeypoints) >= kmax:
-                        break
+                        break;
+            keypoints = selectedKeypoints
+        ed_t = time.time()
 
-                selectedPositions = np.array(selectedPositions)
+    elif detetype == "PHASH":
+        st_t = time.time()
+        h, w = img.shape
+        x_center, y_center = int(w / 2), int(h / 2)
+        keypoints = [cv2.KeyPoint(x=x_center, y=y_center, _size=1, _angle=0)]
+        ed_t = time.time()
 
-                # adds the remaining keypoints according to the distance threshold,
-                # if the amount of wanted keypoints was not reached yet
-                # print('selected keypoints size: ', len(selectedKeypoints), ' kmax: ',kmax)
-                if len(selectedKeypoints) < kmax:
-                    matcher = cv2.BFMatcher()
-                    for i in range(keepTopNCount, positions.shape[0]):
-                        currentPosition = [positions[i]]
-                        currentPosition = np.array(currentPosition)
+    elif detetype == "VGG":
+        st_t = time.time()
+        h, w = img.shape
+        x_center, y_center = int(w / 2), int(h / 2)
+        keypoints = [cv2.KeyPoint(x=x_center, y=y_center, _size=1, _angle=0)]
+        ed_t = time.time()
 
-                        match = matcher.match(currentPosition, selectedPositions)[0]
-                        if match.distance > distanceThreshold:
-                            selectedKeypoints.append(keypoints[i])
-                            selectedPositions = np.vstack((selectedPositions, currentPosition))
+    elif detetype == 'MOBILE':
+        return [0], -1
 
-                        # if the amount of wanted keypoints was reached, quits the loop
-                        if len(selectedKeypoints) >= kmax:
-                            break;
-                keypoints = selectedKeypoints
-            ed_t = time.time()
+    elif detetype == 'DINO':
+        return [0], -1
 
-        elif detetype == "PHASH":
-            st_t = time.time()
-            h, w = img.shape
-            x_center, y_center = int(w / 2), int(h / 2)
-            keypoints = [cv2.KeyPoint(x=x_center, y=y_center, _size=1, _angle=0)]
-            ed_t = time.time()
-
-        elif detetype == "VGG":
-            st_t = time.time()
-            h, w = img.shape
-            x_center, y_center = int(w / 2), int(h / 2)
-            keypoints = [cv2.KeyPoint(x=x_center, y=y_center, _size=1, _angle=0)]
-            ed_t = time.time()
-
-        elif detetype == 'MOBILE':
-            return [0], -1
-
-        elif detetype == 'DINO':
-            return [0], -1
-
-    except Exception as e:
-        return [], -1
+    # except Exception as e:
+    #     return [], -1
 
     # det_t = ed_t - st_t
     return keypoints, img
