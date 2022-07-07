@@ -1,17 +1,10 @@
-import os, faiss, time, collections, pickle, copy, gc, dill, h5py, json
+import os, faiss, time, collections, pickle, gc, json, h5py
 
-import bigjson
 import orjson
-import ujson
-import deepdish as dd
-import json_stream
-import mmap
-import itertools
 
 import numpy as np
 
 from tqdm import tqdm
-from silx.io.dictdump import dicttoh5, h5todict
 from inspect import currentframe, getframeinfo
 from debug import d_print
 from pathlib import Path
@@ -147,7 +140,7 @@ class Index:
         return raw_feature_list, all_img_data_dict
 
 
-    def train_index(self, image_list, training_features=None):
+    def train_index(self, image_list, training_features=None, write=True):
         if image_list:
             training_features = self.features_from_path_list(image_list, ID=True)
 
@@ -202,7 +195,7 @@ class Index:
 
         d_print('LOG', getframeinfo(currentframe()), f'Training finished in {time.time() - s_t}')
 
-        if self.cache_dir:
+        if self.cache_dir and write:
             self.write_index()
 
     def add_to_index(self, image_list, write=True, feature_list=None, ids=None):

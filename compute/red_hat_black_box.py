@@ -128,14 +128,14 @@ def full_pipeline(start_date, end_date, root_data_path='./data', output_file=Non
     i.feature_list = feature_list
     i.ID_list = list(id_feature_dict.keys())
 
-    i.train_index(None, training_features=np.array(feature_list, dtype=np.float32))
-    i.add_to_index(None, feature_list=np.array(i.feature_list, dtype=np.float32), ids=np.array(i.ID_list))
+    i.train_index(None, training_features=np.array(feature_list, dtype=np.float32), write=False)
+    i.add_to_index(None, feature_list=np.array(i.feature_list, dtype=np.float32), ids=np.array(i.ID_list), write=False)
     g = create_graph(i)
     cluster_data = cluster(g, 'louvain')
 
-    if output_file:
-        with open(output_file, 'w+') as f:
-            json.dump(cluster_data, f)
+    # if output_file:
+    #     with open(output_file, 'w+') as f:
+    #         json.dump(cluster_data, f)
 
     return cluster_data
 
