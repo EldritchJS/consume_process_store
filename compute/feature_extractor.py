@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use("Agg")
 import cv2, imagehash, time, gc
 import concurrent.futures
 import copyreg
