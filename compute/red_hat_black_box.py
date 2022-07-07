@@ -105,8 +105,14 @@ def create_graph(i):
 
     return G
 
+
 def full_pipeline(start_date, end_date, root_data_path='./data', output_file=None):
-    mp.set_start_method('spawn')
+
+    try:
+        mp.set_start_method('spawn')
+    except RuntimeError:
+        pass
+
     data_tag = 'ukr'
     tag_size = 16
     feature = 'PHASH'
