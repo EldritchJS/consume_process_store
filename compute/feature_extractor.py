@@ -268,7 +268,7 @@ def feature_detection(imgpath, img, detetype, gpu=True, kmax=500):
         h, w = img.shape
         print(imgpath, img.shape)
         x_center, y_center = int(w / 2), int(h / 2)
-        keypoints = [cv2.KeyPoint(x=x_center, y=y_center, _size=1, _angle=0)]
+        keypoints = [cv2.KeyPoint(x=x_center, y=y_center, size=1, angle=0)]
         print(keypoints)
         ed_t = time.time()
 
@@ -276,7 +276,7 @@ def feature_detection(imgpath, img, detetype, gpu=True, kmax=500):
         st_t = time.time()
         h, w = img.shape
         x_center, y_center = int(w / 2), int(h / 2)
-        keypoints = [cv2.KeyPoint(x=x_center, y=y_center, _size=1, _angle=0)]
+        keypoints = [cv2.KeyPoint(x=x_center, y=y_center, size=1, angle=0)]
         ed_t = time.time()
 
     elif detetype == 'MOBILE':
