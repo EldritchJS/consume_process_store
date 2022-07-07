@@ -25,7 +25,7 @@ def cluster(G, cluster_type):
     elif cluster_type == 'spectral':
         clustering_functions.spectral_clustering(G, output_file)
     elif cluster_type == 'louvain':
-        clustering_functions.louvain_clustering(G, output_file)
+        clustering_functions.louvain_clustering(G)
     elif cluster_type == 'hdbscan':
         clustering_functions.h_dbscan(G, output_file)
     elif cluster_type == 'markov':
@@ -82,7 +82,7 @@ def create_graph(i):
 
         query_result_dict = i.query_index(None, query_feature_list = query_feature_list, gpu=False)
 
-        feature_type = 'surf_mobile'
+        feature_type = 'PHASH'
         batch_edge_tuples = []
         if 'surf' in feature_type:
             for k, v in tqdm(query_result_dict.items(), desc='Computing Edges'):
