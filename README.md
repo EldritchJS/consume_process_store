@@ -19,7 +19,7 @@ Now you can start an instance of the consume/compute application.
 
 
 ```
-oc new-app openshift/python:latest~https://github.com/eldritchjs/consume_process_store#<YOUR_BRANCH> \
+oc new-app https://github.com/eldritchjs/consume_process_store#<YOUR_BRANCH> \
 --context-dir=compute \
 -e KAFKA_BROKERS=<YOUR_PREFIX>-cluster-kafka-brokers:9092 \
 -e KAFKA_TOPIC=<YOUR_KAFKA_TOPIC> \
@@ -27,6 +27,7 @@ oc new-app openshift/python:latest~https://github.com/eldritchjs/consume_process
 -e DBNAME=<YOUR_DBNAME> \
 -e DBUSERNAME=<YOUR_DBUSERNAME> \
 -e DBPASSWORD=<YOUR_DBPASSWORD> \
+--strategy=docker \
 --name <YOUR_PREFIX>-compute
 ```
 
