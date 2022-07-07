@@ -1,12 +1,10 @@
 # syntax=docker/dockerfile:1
 
-FROM registry.access.redhat.com/ubi8/python-39
+FROM eldritchjs/cluster_compute:1.0.0
 
 USER 0
-RUN yum -y install python39 python39-devel mesa-libGL postgresql-devel gcc make
 COPY . /opt/app-root
 WORKDIR /opt/app-root
-RUN pip3 install -r ./requirements.txt
-
+RUN pip3 install -r requirements
 CMD python3 app.py
 
