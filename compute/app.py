@@ -43,21 +43,21 @@ def main(args):
         for message in consumer:
             logging.info('Received {}'.format(message.value))
             # Parse the message
-            if (message.value['command'] == 'Download') and (message.value['url']):
+            if (message.value['command'] == 'Download') and (message.value['url']) and (message.value['scannsfw']):
                 logging.info('Received {} command with {} location'.format(message.value['command'],message.value['url']))
                 logging.info('Download the data here')
                 os.mkdir("./data")
                 request.urlretrieve(message.value['url'], filename="./data/batch.zip")
                 with ZipFile('./data/batch.zip', 'r') as zipObj:
                     zipObj.extractall(path='./data')
-                # Process the data
 
-                logging.info('TODO: Process the data here')
+            elif (message.value['command'] == 'Cluster') and (message.value['startDate']) and (message.value['endDate']):
+                logging.info('Received {} command with start {} and end {}'.format(message.value['command'],message.value['startDate'], message.value['endDate']))
+                # Process the data
+                logging.info('Process the data here')
                 start_date = datetime.strptime('2016-05-01', '%Y-%m-%d')
                 end_date = datetime.strptime('2023-05-05', '%Y-%m-%d')
                 cluster_data = full_pipeline(start_date, end_date, root_data_path='./data')
-
-                shutil.rmtree('./data')
                 # Store the results
                 logging.info('Store results here')
                 try:
