@@ -34,9 +34,9 @@ def results():
 @app.route('/commands', methods=["GET", "POST"])
 def commands():
     if request.method == "POST":
-#        producer = KafkaProducer(bootstrap_servers=cmdline_args.brokers,
- #                                value_serializer=lambda x:
-  #                               dumps(x).encode('utf-8'))
+        producer = KafkaProducer(bootstrap_servers=cmdline_args.brokers,
+                                 value_serializer=lambda x:
+                                 dumps(x).encode('utf-8'))
         command = request.form.get("command")
         if command == 'Download':
             url = request.form.get("url")
@@ -44,14 +44,14 @@ def commands():
             app.logger.info(url)
             app.logger.info(scan)
             message_dict = {'command': command, 'url': url, 'scan': scan}
-#            producer.send(cmdline_args.topic, value=message_dict)
+            producer.send(cmdline_args.topic, value=message_dict)
         elif command == 'Cluster':
             start_date = request.form.get("startd")
             end_date = request.form.get("endd")
             app.logger.info(start_date)
             app.logger.info(end_date)
             message_dict = {'command': command, 'startDate': start_date, 'endDate': end_date}
-#            producer.send(cmdline_args.topic, value=message_dict)
+            producer.send(cmdline_args.topic, value=message_dict)
         
 
         return "<html><body>Sent Command: " + command + "</body></html>"
