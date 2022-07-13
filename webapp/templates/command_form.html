@@ -11,14 +11,15 @@
 </select>
 <div id="urldiv">
 <label for="urlname">URL:</label>
-<input type="text" id="urlname" name="url" placeholder="URL">
+<input type="text" id="urlname" name="url" placeholder="URL" value="">
 <label for="scannsfw">Scan for NSFW:</label>
 <input type="checkbox" id="scannsfw" name = "scannsfw" checked>
 </div>
 <div id="clusterdiv" style = "display:none;">
 <label for="startdate">Start Date:</label>
-<input type="text" id="startdate" name = "startd" placeholder="Start Date">
-<input type="text" id="enddate" name = "endd" placeholder="End Date">
+<input type="date" id="startdate" name = "startd">
+<label for="startdate">End Date:</label>
+<input type="date" id="enddate" name = "endd">
 </div>
 <button type="submit">Send Command</button>
 <script>
