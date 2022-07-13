@@ -38,9 +38,17 @@ def commands():
                                  value_serializer=lambda x:
                                  dumps(x).encode('utf-8'))
         command = request.form.get("command")
-        url = request.form.get("url")
-        message_dict = {'command': command, 'url': url}
-        producer.send(cmdline_args.topic, value=message_dict)
+        if command == 'Download':
+            url = request.form.get("url")
+            scan = request.form.get('scan')
+            message_dict = {'command': command, 'url': url, 'scan': scan}
+            producer.send(cmdline_args.topic, value=message_dict)
+        elif command == 'Cluster':
+            start_date = request.form.get("startdate")
+            end_date = request.form.get("enddate")
+            message_dict = {'command': command, 'startDate': start_date, 'endDate': end_date}
+            producer.send(cmdline_args.topic, value=message_dict)
+        
 
         return "<html><body>Sent Command: " + command + "   URL: " + url + "</body></html>"
     return render_template("command_form.html")
