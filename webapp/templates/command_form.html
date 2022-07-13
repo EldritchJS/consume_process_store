@@ -1,6 +1,41 @@
-<form action="{{ url_for("commands")}}" method="post">
+<HTML>
+	<head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	</head>
+	<body>
+<form action="{{ url_for("command")}}" method="post">
 <label for="commandname">Command:</label>
-<input type="text" id="commandname" name="command" placeholder="Command">
+<select name="command" id="command">
+	<option value="Download">Download</option>
+	<option value="Cluster">Compute Clusters</option>
+</select>
+<div id="urldiv">
 <label for="urlname">URL:</label>
 <input type="text" id="urlname" name="url" placeholder="URL">
+</div>
+<div id="clusterdiv" style = "display:none;">
+<label for="startdate">Start Date:</label>
+<input type="text" id="startdate" name = "startd" placeholder="Start Date">
+<input type="text" id="enddate" name = "endd" placeholder="End Date">
+</div>
 <button type="submit">Send Command</button>
+<script>
+	$('#command').on('change', (e) => {
+		console.log("There's been a change");
+		var selection = $(e.currentTarget).val();
+		console.log('Selection: ' + selection);
+		var u = document.getElementById('urldiv');
+		var c = document.getElementById('clusterdiv');
+		if (selection == 'Download') {
+			console.log('Download branch');
+			c.style.display="none";
+			u.style.display="block"; 
+		} else if (selection == 'Cluster') {
+			console.log('Cluster branch');
+			c.style.display="block";
+			u.style.display="none";
+		}
+	});
+</script>
+	</body>
+	</html>
