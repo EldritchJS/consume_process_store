@@ -43,18 +43,18 @@ def main(args):
         for message in consumer:
             logging.info('Received {}'.format(message.value))
             # Parse the message
-            if (message.value['command'] == 'Download') and (message.value['url']):
-                logging.info('Received {} command with {} location'.format(message.value['command'],message.value['url']))
-                logging.info('Download the data here')
-                os.mkdir("./data")
-                request.urlretrieve(message.value['url'], filename="./data/batch.zip")
-                with ZipFile('./data/batch.zip', 'r') as zipObj:
-                    zipObj.extractall(path='./data')
-                if(message.value['scan']):
-                    # TODO: Do scan here
-                    scan = True
+#            if (message.value['command'] == 'Download') and (message.value['url']):
+ #               logging.info('Received {} command with {} location'.format(message.value['command'],message.value['url']))
+  #              logging.info('Download the data here')
+   #             os.mkdir("./data")
+    #            request.urlretrieve(message.value['url'], filename="./data/batch.zip")
+     #           with ZipFile('./data/batch.zip', 'r') as zipObj:
+      #              zipObj.extractall(path='./data')
+       #         if(message.value['scan']):
+        #            # TODO: Do scan here
+         #           scan = True
 
-            elif (message.value['command'] == 'Cluster') and (message.value['startDate']) and (message.value['endDate']):
+            if (message.value['command'] == 'Cluster') and (message.value['startDate']) and (message.value['endDate']):
                 logging.info('Received {} command with start {} and end {}'.format(message.value['command'],message.value['startDate'], message.value['endDate']))
                 # Process the data
                 logging.info('Process the data here')
@@ -110,7 +110,7 @@ if __name__ == '__main__':
             default='kafka:9092')
     parser.add_argument(
             '--topic',
-            help='Topic to write to, env variable KAFKA_TOPIC',
+            help='Topic to read from, env variable KAFKA_TOPIC',
             default='commands')
     parser.add_argument(
             '--dbhost',
