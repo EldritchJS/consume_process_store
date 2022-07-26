@@ -1,6 +1,40 @@
+<html>
+<head>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+</head>
+<body>
 <form action="{{ url_for("commands")}}" method="post">
 <label for="commandname">Command:</label>
-<input type="text" id="commandname" name="command" placeholder="Command">
+<select name="command" id="command">
+	<option value="Download">Download</option>
+	<option value="Cluster">Compute Clusters</option>
+</select>
+<div id="urldiv">
 <label for="urlname">URL:</label>
-<input type="text" id="urlname" name="url" placeholder="URL">
+<input type="text" id="urlname" name="url" placeholder="URL" value="">
+<label for="scannsfw">Scan for NSFW:</label>
+<input type="checkbox" id="scannsfw" name = "scannsfw" checked>
+</div>
+<div id="clusterdiv" style = "display:none;">
+<label for="startdate">Start Date:</label>
+<input type="date" id="startdate" name = "startd">
+<label for="startdate">End Date:</label>
+<input type="date" id="enddate" name = "endd">
+</div>
 <button type="submit">Send Command</button>
+<script>
+	$('#command').on('change', (e) => {
+		var selection = $(e.currentTarget).val();
+		var u = document.getElementById('urldiv');
+		var c = document.getElementById('clusterdiv');
+		if (selection == 'Download') {
+			c.style.display="none";
+			u.style.display="block"; 
+		} else if (selection == 'Cluster') {
+			c.style.display="block";
+			u.style.display="none";
+		}
+	});
+</script>
+</body>
+</html>

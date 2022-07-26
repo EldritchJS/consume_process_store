@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM eldritchjs/cluster_compute:1.0.0
+FROM eldritchjs/data_acquisition:1.0.0
 
 USER 0
 COPY . /opt/app-root
