@@ -56,6 +56,7 @@ def main(args):
                 start_date = datetime.strptime('2016-05-01', '%Y-%m-%d')
                 end_date = datetime.strptime('2023-05-05', '%Y-%m-%d')
                 cluster_data = full_pipeline(start_date, end_date, root_data_path='./data')
+                logging.info(cluster_data)
 
                 shutil.rmtree('./data')
                 # Store the results
@@ -81,7 +82,7 @@ def main(args):
                     conn.close()
                 except Exception:
                     logging.info('Got exception with postgresql')
-                    continue 
+                    continue
                 time.sleep(0.3) # Artificial delay for testing
 
 def get_arg(env, default):
