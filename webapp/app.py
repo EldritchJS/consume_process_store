@@ -1,6 +1,7 @@
 import os
 import logging
 import argparse
+import json
 from flask import Flask, request, render_template
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -13,22 +14,66 @@ app = Flask(__name__, static_folder='static', static_url_path='')
 
 
 @app.route('/results')
-def results():
-    conn = psycopg2.connect(
-        host=cmdline_args.dbhost,
-        port=5432,
-        dbname=cmdline_args.dbname,
-        user=cmdline_args.dbusername,
-        password=cmdline_args.dbpassword)
-    cursor = conn.cursor(cursor_factory=RealDictCursor)
-    cursor.execute('SELECT COUNT(*) FROM results')
-    res = cursor.fetchone()
+def results(json_results_file):
+    with open(json_results_file) as f:
+        data = json.loads(f.read())
+    return render_template("main.html", clusters=list(data.keys()))
 
-    s = "<table style='border:1px solid red'><tr><td>Count result: "
-    s = s + str(res['count']) + "</td></tr>"
-    conn.close()
+    # conn = psycopg2.connect(
+    #     host=cmdline_args.dbhost,
+    #     port=5432,
+    #     dbname=cmdline_args.dbname,
+    #     user=cmdline_args.dbusername,
+    #     password=cmdline_args.dbpassword)
+    # cursor = conn.cursor(cursor_factory=RealDictCursor)
+    # cursor.execute('SELECT COUNT(*) FROM results')
+    # res = cursor.fetchone()
 
-    return "<html><body>" + s + "</body></html>"
+    # s = "<table style='border:1px solid red'><tr><td>Count result: "
+    # s = s + str(res['count']) + "</td></tr>"
+    # conn.close()
+
+    # return "<html><body>" + s + "</body></html>"
+
+
+@app.route("/cluster/<n>")
+def cluster(json_results_file, n):
+    """
+    This function gets triggered when you try to view a particular cluster.
+
+    You can chose to associate the clusters with numbers (n), but right now w are not
+    doing that. We just read in all the clusters, and chose the nth one to send back.
+
+    Essentially you need to figure out where the clusters are, and get a list of filepaths
+    to the images you want to show. Then, pass that list of filepaths for the images to
+    render_template at the very end. Right now I am passing tuples into the list, but you 
+    can change that if you want in the template file (cluster.html)
+    """
+    # n = find_new_cluster(n)
+    filepaths = []
+
+    # open the cluster data and get all the filepaths for images in the cluster here. 
+    # will change based on how the clusters are organized. 
+    with open(json_results_file) as f:
+        data = json.loads(f.read())
+        for i, file in enumerate(data[str(n)]):
+            print(file.replace(':', '/'))
+            filepaths.append((i, file.replace(':', '/')))
+
+    """
+    Here, you can filter out the number of images you want to display
+    if you are having issues with speed in the UI
+    """
+    #filepaths = filepaths[20] # first 200
+    """
+    By now, filepaths should be something like...
+    [
+        (1, "/home/images/cluster1/image1.jpg"),
+        (2, "/home/images/cluster1/image2.jpg"),
+        ...
+    ]
+    """
+    return render_template("cluster.html", filepaths=filepaths, n=n)
 
 
 @app.route('/commands', methods=["GET", "POST"])
@@ -52,7 +97,7 @@ def commands():
             app.logger.info(end_date)
             message_dict = {'command': command, 'startDate': start_date, 'endDate': end_date}
             producer.send(cmdline_args.topic, value=message_dict)
-        
+
 
         return "<html><body>Sent Command: " + command + "</body></html>"
     return render_template("command_form.html")
