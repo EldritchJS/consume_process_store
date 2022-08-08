@@ -7,7 +7,8 @@ import logging
 import os
 import time
 from datetime import datetime
-from json import loads
+import json
+import requests
 from urllib import request
 import shutil
 from zipfile import ZipFile
@@ -17,12 +18,12 @@ from red_hat_black_box import full_pipeline
 def main(args):
     logging.info('brokers={}'.format(args.brokers))
     logging.info('topic={}'.format(args.topic))
-    logging.info('creating kafka consumer')   
+    logging.info('creating kafka consumer')
 
     consumer = KafkaConsumer(
         args.topic,
         bootstrap_servers=args.brokers,
-        value_deserializer=lambda val: loads(val.decode('utf-8')))
+        value_deserializer=lambda val: json.loads(val.decode('utf-8')))
     logging.info("finished creating kafka consumer")
 
     conn = psycopg2.connect(
@@ -61,6 +62,9 @@ def main(args):
                 start_date = datetime.strptime(message.value['startDate'], '%Y-%m-%d')
                 end_date = datetime.strptime(message.value['endDate'], '%Y-%m-%d')
                 cluster_data = full_pipeline(start_date, end_date, root_data_path='./data')
+                #Send back the data here to the front-end using Kafka?
+                r = requests.post('http://wtheisen-webapp-sandbox.apps.odh-cl1.apps.os-climate.org/results/', data=json.dumps(cluster_data))
+
                 logging.info(cluster_data)
 
                 shutil.rmtree('./data')

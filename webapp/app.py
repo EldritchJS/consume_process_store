@@ -13,11 +13,10 @@ cmdline_args = []
 app = Flask(__name__, static_folder='static', static_url_path='')
 
 
-@app.route('/results')
-def results(json_results_file):
-    with open(json_results_file) as f:
-        data = json.loads(f.read())
-    return render_template("main.html", clusters=list(data.keys()))
+@app.route('/results/<data>')
+def results(data):
+    cluster_dict = json.loads(data)
+    return render_template("main.html", clusters=list(cluster_dict.keys()))
 
     # conn = psycopg2.connect(
     #     host=cmdline_args.dbhost,
@@ -36,8 +35,8 @@ def results(json_results_file):
     # return "<html><body>" + s + "</body></html>"
 
 
-@app.route("/cluster/<n>")
-def cluster(json_results_file, n):
+@app.route("/cluster/<images>")
+def cluster(images):
     """
     This function gets triggered when you try to view a particular cluster.
 
@@ -54,11 +53,11 @@ def cluster(json_results_file, n):
 
     # open the cluster data and get all the filepaths for images in the cluster here. 
     # will change based on how the clusters are organized. 
-    with open(json_results_file) as f:
-        data = json.loads(f.read())
-        for i, file in enumerate(data[str(n)]):
-            print(file.replace(':', '/'))
-            filepaths.append((i, file.replace(':', '/')))
+    # with open(json_results_file) as f:
+    #     data = json.loads(f.read())
+    for i, file in enumerate(images):
+        print(file.replace(':', '/'))
+        filepaths.append((i, file.replace(':', '/')))
 
     """
     Here, you can filter out the number of images you want to display
@@ -73,7 +72,7 @@ def cluster(json_results_file, n):
         ...
     ]
     """
-    return render_template("cluster.html", filepaths=filepaths, n=n)
+    return render_template("cluster.html", filepaths=filepaths, n=-1)
 
 
 @app.route('/commands', methods=["GET", "POST"])
