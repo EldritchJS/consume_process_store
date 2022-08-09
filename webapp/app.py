@@ -16,7 +16,7 @@ app = Flask(__name__, static_folder='static', static_url_path='')
 @app.route('/results', methods=["GET", "PUT"])
 def results():
     if request.method == "PUT":
-        data = request.get_json(force=True)
+        data = json.load(request.data) #request.get_json(force=True)
         with open('./temp.json', 'w+') as f:
             json.dump(data, f)
     elif request.method == "GET":
