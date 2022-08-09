@@ -61,7 +61,7 @@ def main(args):
                 logging.info('Process the data here')
                 start_date = datetime.strptime(message.value['startDate'], '%Y-%m-%d')
                 end_date = datetime.strptime(message.value['endDate'], '%Y-%m-%d')
-                cluster_data = full_pipeline(start_date, end_date, root_data_path='/data/telegram_fix')
+                cluster_data = full_pipeline(start_date, end_date, root_data_path=args.dataprefix)
                 #Send back the data here to the front-end using Kafka?
                 r = requests.post('http://wtheisen-webapp-sandbox.apps.odh-cl1.apps.os-climate.org/results/', data=json.dumps(cluster_data))
 
@@ -105,12 +105,17 @@ def parse_args(parser):
     args.dbname = get_arg('DBNAME', args.dbname)
     args.dbusername = get_arg('DBUSERNAME', args.dbusername)
     args.dbpassword = get_arg('DBPASSWORD', args.dbpassword)
+    args.dataprefix = get_arg('DATA_PREFIX', args.dataprefix)
     return args
 
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+            '--dataprefix',
+            help='The data location prefix, env variable DATA_PREFIX',
+            default='/data/telegram_fix')
     parser.add_argument(
             '--brokers',
             help='The bootstrap servers, env variable KAFKA_BROKERS',
