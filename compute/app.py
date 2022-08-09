@@ -1,5 +1,5 @@
-import psycopg2
-from psycopg2.extras import RealDictCursor
+#import psycopg2
+#from psycopg2.extras import RealDictCursor
 from os import environ
 from kafka import KafkaConsumer
 import argparse
@@ -26,19 +26,19 @@ def main(args):
         value_deserializer=lambda val: json.loads(val.decode('utf-8')))
     logging.info("finished creating kafka consumer")
 
-    conn = psycopg2.connect(
-        host = args.dbhost,
-        port = 5432,
-        dbname = args.dbname,
-        user = args.dbusername,
-        password = args.dbpassword)
-    cur = conn.cursor(cursor_factory=RealDictCursor)
-    logging.info('Creating table if not exists')
-    query = 'CREATE TABLE IF NOT EXISTS results (ID varchar(40) NOT NULL, CLUSTERS integer, SCORE integer)'
-    cur.execute(query)
-    cur.close()
-    conn.commit()
-    conn.close()
+#    conn = psycopg2.connect(
+#        host = args.dbhost,
+#        port = 5432,
+#        dbname = args.dbname,
+#        user = args.dbusername,
+#        password = args.dbpassword)
+#    cur = conn.cursor(cursor_factory=RealDictCursor)
+    #logging.info('Creating table if not exists')
+#    query = 'CREATE TABLE IF NOT EXISTS results (ID varchar(40) NOT NULL, CLUSTERS integer, SCORE integer)'
+#    cur.execute(query)
+#    cur.close()
+#    conn.commit()
+#    conn.close()
 
     while True:
         for message in consumer:
@@ -48,7 +48,7 @@ def main(args):
  #               logging.info('Received {} command with {} location'.format(message.value['command'],message.value['url']))
   #              logging.info('Download the data here')
    #             os.mkdir("./data")
-    #            request.urlretrieve(message.value['url'], filename="./data/batch.zip")
+   # #            request.urlretrieve(message.value['url'], filename="./data/batch.zip")
      #           with ZipFile('./data/batch.zip', 'r') as zipObj:
       #              zipObj.extractall(path='./data')
        #         if(message.value['scan']):
@@ -63,37 +63,36 @@ def main(args):
                 end_date = datetime.strptime(message.value['endDate'], '%Y-%m-%d')
                 cluster_data = full_pipeline(start_date, end_date, root_data_path=args.dataprefix)
                 #Send back the data here to the front-end using Kafka?
+                logging.info('Finished processing, sending results')
                 r = requests.put('http://wtheisen-webapp-sandbox.apps.odh-cl1.apps.os-climate.org/results/', json=cluster_data)
-
-                logging.info(cluster_data)
 
                 # shutil.rmtree('./data')
                 # Store the results
-                logging.info('Store results here')
-                try:
-                    logging.info('Connecting to DB')
-                    conn = psycopg2.connect(
-                        host=args.dbhost,
-                        port=5432,
-                        dbname=args.dbname,
-                        user=args.dbusername,
-                        password=args.dbpassword)
-                    logging.info('Connected, creating cursor')
-                    cur = conn.cursor(cursor_factory=RealDictCursor)
-                    query = 'INSERT INTO results(ID, CLUSTERS, SCORE) VALUES (%s,13,19)'
-                    logging.info('Cursor created, sending query {}'.format(query))
-                    cur.execute(query, (datetime.now().strftime('%m/%d/%Y-%H:%M:%S'),))
-                    logging.info('Closing cursor')
-                    cur.close()
-                    logging.info('Committing change')
-                    conn.commit()
-                    logging.info('Closing connection')
-                    conn.close()
-                except Exception:
-                    logging.info('Got exception with postgresql')
-                    continue
-                time.sleep(0.3) # Artificial delay for testing
-
+#                logging.info('Store results here')
+ #               try:
+  #                  logging.info('Connecting to DB')
+   #                 conn = psycopg2.connect(
+    #                    host=args.dbhost,
+     #                   port=5432,
+        #                dbname=args.dbname,
+         #               user=args.dbusername,
+          #              password=args.dbpassword)
+           #         logging.info('Connected, creating cursor')
+    #                cur = conn.cursor(cursor_factory=RealDictCursor)
+     #               query = 'INSERT INTO results(ID, CLUSTERS, SCORE) VALUES (%s,13,19)'
+      #              logging.info('Cursor created, sending query {}'.format(query))
+       #             cur.execute(query, (datetime.now().strftime('%m/%d/%Y-%H:%M:%S'),))
+        #            logging.info('Closing cursor')
+         #           cur.close()
+        #            logging.info('Committing change')
+        #            conn.commit()
+        #            logging.info('Closing connection')
+        #            conn.close()
+         #       except Exception:
+         #           logging.info('Got exception with postgresql')
+          #          continue
+           #     time.sleep(0.3) # Artificial delay for testing
+#
 def get_arg(env, default):
     return os.getenv(env) if os.getenv(env, "") != "" else default
 
