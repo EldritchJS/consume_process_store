@@ -18,7 +18,7 @@ def results(data):
     if request.method == "PUT":
         with open('./temp.json', 'w+') as f:
             json.dump(f, data)
-    elif request.method == "POST":
+    elif request.method == "GET":
         with open('./temp.json', 'r') as f:
             data = json.load(f)
         cluster_dict = json.loads(data)
