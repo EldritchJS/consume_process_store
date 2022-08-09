@@ -13,18 +13,24 @@ cmdline_args = []
 app = Flask(__name__, static_folder='static', static_url_path='')
 
 
-@app.route('/results', methods=["GET", "PUT"])
+@app.route('/results', methods=["GET", "POST", "PUT"])
 def results():
-    if request.method == "PUT":
-        data = json.load(request.data) #request.get_json(force=True)
+    if request.method == "POST":
+        data = request.get_json(force=True)
+        logging.info("In POST with " + json.dumps(data))
         with open('./temp.json', 'w+') as f:
             json.dump(data, f)
     elif request.method == "GET":
         with open('./temp.json', 'r') as f:
             data = json.load(f)
+            logging.info("In GET with " + json.dumps(data))
         # cluster_dict = json.loads(data)
         return render_template("main.html", clusters=list(data.keys()))
-
+    elif request.method == "PUT":
+        data = json.load(request.data) 
+        logging.info("In PUT with " + json.dumps(data))
+        with open('./temp.json', 'w+') as f:
+            json.dump(data, f)
     # conn = psycopg2.connect(
     #     host=cmdline_args.dbhost,
     #     port=5432,
