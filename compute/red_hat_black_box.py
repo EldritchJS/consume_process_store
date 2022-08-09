@@ -119,6 +119,7 @@ def full_pipeline(start_date, end_date, root_data_path='./data', output_file=Non
 
     root_post_path = root_data_path
     json_path_list = glob(root_post_path + '/**/*.json', recursive=True)
+    print('Found {len(json_path_list)} json files')
 
     timely_images = []
     for json_file in tqdm(json_path_list, desc='Filtering posts by date'):
