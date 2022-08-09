@@ -67,7 +67,7 @@ def main(args):
 
                 logging.info(cluster_data)
 
-                shutil.rmtree('./data')
+                # shutil.rmtree('./data')
                 # Store the results
                 logging.info('Store results here')
                 try:
