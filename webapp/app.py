@@ -3,8 +3,8 @@ import logging
 import argparse
 import json
 from flask import Flask, request, render_template
-import psycopg2
-from psycopg2.extras import RealDictCursor
+##import psycopg2
+#from psycopg2.extras import RealDictCursor
 from kafka import KafkaProducer
 from json import dumps
 
