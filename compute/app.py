@@ -61,7 +61,7 @@ def main(args):
                 logging.info('Process the data here')
                 start_date = datetime.strptime(message.value['startDate'], '%Y-%m-%d')
                 end_date = datetime.strptime(message.value['endDate'], '%Y-%m-%d')
-                cluster_data = full_pipeline(start_date, end_date, root_data_path='./data')
+                cluster_data = full_pipeline(start_date, end_date, root_data_path='/data/telegram_fix')
                 #Send back the data here to the front-end using Kafka?
                 r = requests.post('http://wtheisen-webapp-sandbox.apps.odh-cl1.apps.os-climate.org/results/', data=json.dumps(cluster_data))
 
