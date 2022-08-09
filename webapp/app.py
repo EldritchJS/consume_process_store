@@ -31,6 +31,7 @@ def results():
         logging.info("In PUT with " + json.dumps(data))
         with open('./temp.json', 'w+') as f:
             json.dump(data, f)
+    return 0
     # conn = psycopg2.connect(
     #     host=cmdline_args.dbhost,
     #     port=5432,
