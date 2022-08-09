@@ -63,7 +63,7 @@ def main(args):
                 end_date = datetime.strptime(message.value['endDate'], '%Y-%m-%d')
                 cluster_data = full_pipeline(start_date, end_date, root_data_path=args.dataprefix)
                 #Send back the data here to the front-end using Kafka?
-                r = requests.put('http://wtheisen-webapp-sandbox.apps.odh-cl1.apps.os-climate.org/results/', data=json.dumps(cluster_data))
+                r = requests.put('http://wtheisen-webapp-sandbox.apps.odh-cl1.apps.os-climate.org/results/', json=cluster_data)
 
                 logging.info(cluster_data)
 
