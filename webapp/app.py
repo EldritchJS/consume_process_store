@@ -13,7 +13,7 @@ cmdline_args = []
 app = Flask(__name__, static_folder='static', static_url_path='')
 
 
-@app.route('/results/<data>')
+@app.route('/results/<data>', methods=['PUT'])
 def results(data):
     cluster_dict = json.loads(data)
     return render_template("main.html", clusters=list(cluster_dict.keys()))
