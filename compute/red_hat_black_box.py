@@ -20,18 +20,22 @@ import networkx as nx
 def cluster(G, cluster_type):
     output_file = 'meow.dat'
 
+    cluster_dict = {}
+
     if cluster_type == 'hierarchical':
-        clustering_functions.hierarchical_clustering(G)
+        cluster_dict = clustering_functions.hierarchical_clustering(G)
     elif cluster_type == 'spectral':
-        clustering_functions.spectral_clustering(G)
+        cluster_dict = clustering_functions.spectral_clustering(G)
     elif cluster_type == 'louvain':
-        clustering_functions.louvain_clustering(G)
+        cluster_dict = clustering_functions.louvain_clustering(G)
     elif cluster_type == 'hdbscan':
-        clustering_functions.h_dbscan(G)
+        cluster_dict = clustering_functions.h_dbscan(G)
     elif cluster_type == 'markov':
-        clustering_functions.markov_clustering(G)
+        cluster_dict = clustering_functions.markov_clustering(G)
     else:
         print('Unrecognized cluster type...')
+
+    return cluster_dict
 
 
 def _query_result_to_image(ID_to_path, query_result_dict, simple_vote=True):
@@ -106,7 +110,7 @@ def create_graph(i):
     return G
 
 
-def full_pipeline(start_date, end_date, root_data_path='./data', output_file=None):
+def full_pipeline(start_date, end_date, root_data_path='/Users/wtheisen/dummy', output_file=None):
 
     try:
         mp.set_start_method('spawn')
@@ -114,11 +118,9 @@ def full_pipeline(start_date, end_date, root_data_path='./data', output_file=Non
         pass
 
     data_tag = 'ukr'
-    tag_size = 16
     feature = 'PHASH'
 
-    root_post_path = root_data_path
-    json_path_list = glob(root_post_path + '/**/*.json', recursive=True)
+    json_path_list = glob(root_data_path + '/**/*.json', recursive=True)
     print(f'Found {len(json_path_list)} json files')
 
     timely_images = []
@@ -146,6 +148,7 @@ def full_pipeline(start_date, end_date, root_data_path='./data', output_file=Non
     #     with open(output_file, 'w+') as f:
     #         json.dump(cluster_data, f)
 
+    # print(cluster_data)
     return cluster_data
 
 
@@ -153,4 +156,4 @@ if __name__ == '__main__':
     start_date = datetime.strptime('2016-05-01', '%Y-%m-%d')
     end_date = datetime.strptime('2023-05-05', '%Y-%m-%d')
 
-    full_pipeline(start_date, end_date, 'clusters.dat')
+    full_pipeline(start_date, end_date, output_file='clusters.dat')

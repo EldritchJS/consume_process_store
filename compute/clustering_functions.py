@@ -168,7 +168,7 @@ def louvain_clustering(G):
     #         print(n)
 
     # clusters = louvain.best_partition(G, resolution=0.008)
-    clusters = louvain.best_partition(G, resolution=0.05)
+    clusters = louvain.best_partition(G)
 
     cluster_dict = defaultdict(list)
     for image, cluster_id in clusters.items():
