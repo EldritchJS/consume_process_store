@@ -2,7 +2,7 @@ import os
 import logging
 import argparse
 import json
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, send_file
 ##import psycopg2
 #from psycopg2.extras import RealDictCursor
 from kafka import KafkaProducer
@@ -10,7 +10,7 @@ from json import dumps
 
 
 cmdline_args = []
-app = Flask(__name__, static_folder='static', static_url_path='')
+app = Flask(__name__, static_folder='cluster', static_url_path='')
 
 
 @app.route('/results', methods=["GET", "POST", "PUT"])
@@ -71,8 +71,14 @@ def cluster(n):
         data = json.loads(f.read())
 
     for i, file in enumerate(data[n]):
-        print(file.replace(':', '/'))
-        filepaths.append((i, file.replace(':', '/')))
+        path = file.replace(':', '/')
+        n_path = os.path.normpath(path)
+        path_parts = n_path.split(os.sep)
+
+        flask_path_list = ['small_data'] + path_parts[-3:]
+        flask_path = '/'.join(flask_path_list)
+
+        filepaths.append((i, flask_path))
 
     """
     Here, you can filter out the number of images you want to display
@@ -87,7 +93,29 @@ def cluster(n):
         ...
     ]
     """
-    return render_template("cluster.html", filepaths=filepaths, n=-1)
+    return render_template("cluster.html", filepaths=filepaths, n=n)
+
+
+@app.route("/cluster/<path:filepath>")
+def get_image(filepath):
+    """
+    This function sends the image to the front end
+    You need to ensure that the filepath that gets passed in is correct,
+    or parse it accordingly.
+
+    Make sure that the folder with the images is mounted and readable
+    """
+    # filepath = filepath.replace("world/", "")
+    # filepath = "/media/wtheisen/scratch2/clusterImages/" + filepath
+    # filepath = "/media/jbrogan4/" + filepath
+
+    n_path = os.path.normpath(filepath)
+    path_parts = n_path.split(os.sep)
+
+    flask_path_list = ['small_data'] + path_parts[-3:]
+    flask_path = '/'.join(flask_path_list)
+
+    return send_file(flask_path)
 
 
 @app.route('/commands', methods=["GET", "POST"])
