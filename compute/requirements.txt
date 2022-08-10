@@ -1,5 +1,4 @@
 pip>22.0.5
-psycopg2
 requests
 kafka-python
 numpy
