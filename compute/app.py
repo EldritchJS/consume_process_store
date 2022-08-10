@@ -64,7 +64,7 @@ def main(args):
                 cluster_data = full_pipeline(start_date, end_date, root_data_path=args.dataprefix)
                 #Send back the data here to the front-end using Kafka?
                 logging.info('Finished processing, sending results')
-                r = requests.put('http://wtheisen-webapp-sandbox.apps.odh-cl1.apps.os-climate.org/results/', json=cluster_data)
+                r = requests.post('http://wtheisen-webapp-sandbox.apps.odh-cl1.apps.os-climate.org/results', json=cluster_data)
 
                 # shutil.rmtree('./data')
                 # Store the results
