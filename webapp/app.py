@@ -31,7 +31,7 @@ def results():
         logging.info("In PUT with " + json.dumps(data))
         with open('./temp.json', 'w+') as f:
             json.dump(data, f)
-    return 0
+    # return 0
     # conn = psycopg2.connect(
     #     host=cmdline_args.dbhost,
     #     port=5432,
@@ -46,11 +46,11 @@ def results():
     # s = s + str(res['count']) + "</td></tr>"
     # conn.close()
 
-    # return "<html><body>" + s + "</body></html>"
+    return "<html><body></body></html>"
 
 
-@app.route("/cluster/<images>")
-def cluster(images):
+@app.route("/cluster/<n>")
+def cluster(n):
     """
     This function gets triggered when you try to view a particular cluster.
 
@@ -67,9 +67,10 @@ def cluster(images):
 
     # open the cluster data and get all the filepaths for images in the cluster here. 
     # will change based on how the clusters are organized. 
-    # with open(json_results_file) as f:
-    #     data = json.loads(f.read())
-    for i, file in enumerate(images):
+    with open('temp.json') as f:
+        data = json.loads(f.read())
+
+    for i, file in enumerate(data[n]):
         print(file.replace(':', '/'))
         filepaths.append((i, file.replace(':', '/')))
 
